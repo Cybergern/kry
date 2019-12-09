@@ -1,0 +1,11 @@
+*.class
+out/
+.idea/
+.gradle/
+gradle
+.vertx
+wrapper/
+caches/
+daemon/
+native/
+workers/
