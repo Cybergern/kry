@@ -35,7 +35,6 @@ public class DBConnector {
     return query(query, new JsonArray());
   }
 
-
   public Future<ResultSet> query(String query, JsonArray params) {
     if(query == null || query.isEmpty()) {
       return Future.failedFuture("Query is null or empty");
@@ -56,30 +55,23 @@ public class DBConnector {
     return queryResultFuture;
   }
 
-  public Future<Service> addService(Service service) {
+  public Future<ResultSet> addService(Service service) {
     if (service.getName() == null || service.getName().isEmpty()) {
       return Future.failedFuture("Name can't be empty");
     }
-    client.updateWithParams("INSERT INTO service (name, url, added_by, last_status) VALUES (?, ?, ?, ?)",
-            new JsonArray().add(service.getName()).add(service.getUrl()).add(service.getAddedBy()).add(service.getStatus()),
-            ar -> {
-      if (ar.failed()) {
-        ar.cause().printStackTrace();
-      } else {
-        System.out.println("Insert succeeded for service " + service.getName());
-      }
-            });
-    return Future.succeededFuture(service);
+    return query("INSERT INTO service (name, url, added_by, last_status) VALUES (?, ?, ?, ?)",
+            new JsonArray().add(service.getName()).add(service.getUrl()).add(service.getAddedBy()).add(service.getStatus())).setHandler(ar -> {
+              if (ar.failed()) {
+                ar.cause().printStackTrace();
+              } else {
+                System.out.println("Insert succeeded for service " + service.getName());
+              }
+    });
   }
 
   public Future<List<Service>> getAllServices() {
     return query("SELECT * FROM service").map(rs -> rs.getResults().stream().map(this::mapper).collect(Collectors.toList()));
   }
-
-/*  public Future<Service> getService(String name) {
-    return query("SELECT * FROM service WHERE name = ?", new JsonArray().add(name))
-            .map(rs -> rs.getResults().stream().map(this::mapper).findFirst().get());
-  }*/
 
   public Future<Object> deleteService(String serviceName) {
     query("DELETE from service WHERE name = ?", new JsonArray().add(serviceName)).setHandler(ar -> {
@@ -92,8 +84,8 @@ public class DBConnector {
     return Future.succeededFuture();
   }
 
-  public void setServiceStatus(String serviceName, String status) {
-    query("UPDATE service SET last_status = ? WHERE name = ?",
+  public Future<ResultSet> setServiceStatus(String serviceName, String status) {
+    return query("UPDATE service SET last_status = ? WHERE name = ?",
             new JsonArray().add(status).add(serviceName)).setHandler(ar -> {
       if (ar.failed()) {
         ar.cause().printStackTrace();
