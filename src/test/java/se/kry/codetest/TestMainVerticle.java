@@ -43,7 +43,7 @@ public class TestMainVerticle {
     @Test
     @DisplayName("Do a full add, get, delete of a service and make sure it disappears afterwards")
     @Timeout(value = 10, timeUnit = TimeUnit.SECONDS)
-    void full_round_test(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+    void full_round_test(Vertx vertx, VertxTestContext testContext) {
         WebClient client = WebClient.create(vertx);
         client.post(8080, "::1", "/service")
                 .sendJsonObject(new JsonObject().put("name", "kry").put("url", "www.kry.com"),
