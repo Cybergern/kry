@@ -35,7 +35,7 @@ public class BackgroundPoller extends AbstractVerticle {
     System.out.println("Polling service " + service.getName());
     client.get(80, service.getUrl(), "/").send(ar -> {
       if (ar.failed()) {
-        connector.setServiceStatus(service.getName(), "DOWN");
+        connector.setServiceStatus(service.getName(), "FAIL");
       } else {
         connector.setServiceStatus(service.getName(), this.translateStatusCode(ar.result().statusCode()));
       }
@@ -47,7 +47,7 @@ public class BackgroundPoller extends AbstractVerticle {
     if (code == 200) {
       return "OK";
     } else {
-      return "DOWN";
+      return "FAIL";
     }
   }
 }
