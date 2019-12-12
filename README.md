@@ -35,3 +35,5 @@ Questions:
 - How do you log things in the system?
 
 - Do you build microservices? If so, how do they communicate with each other? Do the microservices own their own small databases or do you have a major one with a bigger API?
+
+- What is your Way of Working?
